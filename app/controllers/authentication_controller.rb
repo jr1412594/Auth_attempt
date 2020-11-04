@@ -7,11 +7,16 @@ class AuthenticationController < ApplicationController
             status: :unauthorized
         else
             # byebug
-           if !@user.authenticate(params[:password])
-            render json: {message: "Incorrect username or password"}, 
-            status: :unauthorized
-           else
-        end
+            if !@user.authenticate(params[:password])
+                render json: {message: "Incorrect username or password"}, 
+                status: :unauthorized
+            else
+                secret = 'only tell this to the bouncer'
+                payload = {user_id: @user.id}
+                token = JWT.encode(payload, secret)
+
+                render json: {token: token}
+            end
         end
     end
 end
